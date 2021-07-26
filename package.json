@@ -24,6 +24,9 @@
   },
   "homepage": "https://github.com/kristians-kuhta/tagelect#readme",
   "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.8",
+    "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
     "jest": "^27.0.6",
     "sass-loader": "^12.1.0",
