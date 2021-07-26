@@ -1,0 +1,25 @@
+{
+  "name": "tagelect",
+  "version": "1.0.0",
+  "description": "Tag input field with autocomplete and validations.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kristians-kuhta/tagelect.git"
+  },
+  "keywords": [
+    "tags",
+    "tag-input",
+    "autocomplete",
+    "tag-field"
+  ],
+  "author": "Kristians Kuhta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kristians-kuhta/tagelect/issues"
+  },
+  "homepage": "https://github.com/kristians-kuhta/tagelect#readme"
+}
