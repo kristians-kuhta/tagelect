@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Tag input field with autocomplete and validations.",
   "private": "true",
+  "main": "./dist/tagelect.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "webpack",
     "test": "jest"
