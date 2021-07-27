@@ -14,11 +14,7 @@ import axios from 'axios';
 import _merge from 'lodash.merge';
 
 function Tagelect(element, options) {
-  if(element.dataset.tagelectInitialized) {
-    return;
-  }
   this._element = element;
-  element.dataset.tagelectInitialized = true;
   this.defaultOptions = {
     // max amount of tags that can be added
     // (it is possible it initially render more by setting input value)
@@ -26,7 +22,7 @@ function Tagelect(element, options) {
     maxTagsError: "can't contain more than %TAGS% tags",
     validationRegex: undefined, // the regex that is going to be used while validating a tag
     validationRegexMessage: 'permitted characters used', // the message shown if regexp validation fails
-    norDuplicates: false, // are duplicates allowed
+    noDuplicates: false, // are duplicates allowed
     noDuplicatesMessage: 'duplicates are not allowed', // the message shown if validations fail because of duplicates
     placeholder: 'Enter a tag...', // The placeholder for the tag entry
     removeButton: true, // Show remove button
@@ -68,7 +64,7 @@ function Tagelect(element, options) {
   }
 
   this.setFirstSuggestion = function(suggestion) {
-      const container = this._element.parentElement.querySelector(`.${this.options.classNames.container}`);
+    const container = this._element.parentElement.querySelector(`.${this.options.classNames.container}`);
     const tagInput = container.querySelector(`.${this.options.classNames.tagInput}`);
     const suggestionSuffix = suggestion ? suggestion.replace(tagInput.innerText, '') : '';
     tagInput.dataset.suggestion = suggestionSuffix;
