@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "webpack",
-    "test": "jest"
+    "test": "npm run build && jest"
   },
   "repository": {
     "type": "git",
