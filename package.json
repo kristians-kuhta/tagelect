@@ -8,8 +8,12 @@
     "dist"
   ],
   "scripts": {
-    "build": "webpack",
-    "test": "npm run build && jest"
+    "js:transpile": "babel src -d dist",
+    "css:preprocess-sass": "node-sass src/tagelect.scss > dist/tagelect.css",
+    "css:preprocess-sass-minimized": "node-sass --output-style compressed src/tagelect.scss > dist/tagelect.min.css",
+    "build": "npm run js:transpile && npm run css:preprocess-sass-minimized",
+    "build:test": "npm run js:transpile && npm run css:preprocess-sass",
+    "test": "npm run build:test && cypress open"
   },
   "repository": {
     "type": "git",
