@@ -8,9 +8,7 @@ import "regenerator-runtime/runtime";
 
 import merge from 'lodash.merge';
 
-import './index.scss';
-
-import axios from 'axios';
+import { get } from 'axios';
 import _merge from 'lodash.merge';
 
 function Tagelect(element, options) {
@@ -225,7 +223,7 @@ function Tagelect(element, options) {
       'X-CSRF-Token': auth_token,
       'X-Requested-With': 'XMLHttpRequest'
     }
-    axios.get(url, { headers }).then(function(response) {
+    get(url, { headers }).then(function(response) {
       this.suggestions = response.data;
       this.setFirstSuggestion(response.data[0]);
       // If response has no data - don't show dropdown
