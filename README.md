@@ -77,7 +77,7 @@ yarn add tagelect
 
 ### Options
 | Option               | Type     | Description                                               |
-| ------------------------------------------------------------------------------------------- |
+| -------------------- | -------- | --------------------------------------------------------- |
 | maxTags              | Number   | if set validates that up to the number of tags only       |
 | maxTagsError         | String   | validation message for max. tags validation               |
 | validationRegex      | Regex    | if set validates that new tags match the regex            |
