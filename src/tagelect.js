@@ -26,6 +26,8 @@ function Tagelect(element, options) {
     removeButton: true, // Show remove button
     tagDelimiter: ',', // The delimiter used when setting form input value
     suggestionsCount: 5, // Fetch and display 5 suggestions
+    suggestionHeaders: () => ({}), // Function returning headers for suggestion GET request
+    suggestionsSource: null,
     // CSS classes
     classNames: {
       wrapper: 'tagelect',
@@ -50,7 +52,7 @@ function Tagelect(element, options) {
 
   if(this._element.value) {
     // Set the initial tags from hidden input value
-    this.tags = this._element.value.split(',');
+    this.tags = this._element.value.split(',').map(e => e.trim());
   }
 
   // Hide element
@@ -62,10 +64,14 @@ function Tagelect(element, options) {
   }
 
   this.setFirstSuggestion = function(suggestion) {
-    const container = this._element.parentElement.querySelector(`.${this.options.classNames.container}`);
-    const tagInput = container.querySelector(`.${this.options.classNames.tagInput}`);
-    const suggestionSuffix = suggestion ? suggestion.replace(tagInput.innerText, '') : '';
-    tagInput.dataset.suggestion = suggestionSuffix;
+    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
+    const tagInput = container.querySelector('[data-tagelect-tag-input]');
+
+    if(suggestion) {
+      tagInput.dataset.suggestion = suggestion.replace(tagInput.innerText, '');
+    } else {
+      tagInput.removeAttribute('data-suggestion');
+    }
   }
 
   this.removeValidationErrors = function() {
@@ -75,7 +81,7 @@ function Tagelect(element, options) {
   }
   this.buildErrorSpan = function(errorMessage) {
     const error = document.createElement('span');
-    error.classList.add(this.options.classNames.error);
+    error.classList.add(...this.options.classNames.error.split(' '));
     error.innerText = errorMessage;
     error.dataset.tagelectError = true;
     return error;
@@ -114,79 +120,85 @@ function Tagelect(element, options) {
 
   }
   this.toggleDropdown = function(show) {
-    const prevDropdown = document.querySelector('#tagelect-dropdown');
+    const prevDropdown = document.querySelector('[data-tagelect-dropdown]');
     // Remove previous dropdown
     if(prevDropdown) {
       prevDropdown.remove();
     }
 
-    // Re-build a new dropdown
-    if (show) {
-      const dropdown = document.createElement('ul');
-      dropdown.classList.add(this.options.classNames.dropdown);
-      dropdown.id = 'tagelect-dropdown';
-      this.suggestions.forEach((suggestion, idx) => {
-	const item = document.createElement('li');
-	item.classList.add(this.options.classNames.dropdownItem);
-	if (idx === 0) {
-	  item.classList.add(this.options.classNames.dropdownItemSelected);
-	}
-	item.innerText = suggestion;
-	item.addEventListener('click', e => {
-	  if(!this.validateStuff(e.target.innerText)) {
-	    return;
-	  }
-
-	  this.tags.push(e.target.innerText);
-	  this.renderTags();
-	  this.setInputValue();
-	  this.clearTagInput();
-	  this.focusOnTagInput();
-	  this.toggleDropdown(false);
-	});
-	dropdown.insertAdjacentElement('beforeend', item);
-      });
-      const container = this._element.parentElement.querySelector(`.${this.options.classNames.container}`);
-      container.insertAdjacentElement('afterend', dropdown);
+    if(!show) {
+      return;
     }
+
+    // Else re-build a new dropdown
+    const dropdown = document.createElement('ul');
+    dropdown.classList.add(...this.options.classNames.dropdown.split(' '));
+    dropdown.dataset.tagelectDropdown = true;
+    this.suggestions.forEach((suggestion, idx) => {
+      const item = document.createElement('li');
+      item.classList.add(...this.options.classNames.dropdownItem.split(' '));
+      item.dataset.tagelectDropdownItem = true;
+      if (idx === 0) {
+	item.classList.add(...this.options.classNames.dropdownItemSelected.split(' '));
+      }
+      item.innerText = suggestion;
+      item.addEventListener('click', e => {
+	if(!this.validateStuff(e.target.innerText)) {
+	  return;
+	}
+
+	this.tags.push(e.target.innerText);
+	this.renderTags();
+	this.setInputValue();
+	this.clearTagInput();
+	this.focusOnTagInput();
+	this.toggleDropdown(false);
+      });
+      dropdown.insertAdjacentElement('beforeend', item);
+    });
+    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
+    container.insertAdjacentElement('afterend', dropdown);
   }
 
   // Tag rendering
-  this.renderTag = function(tagText) {
-    const container = this._element.parentElement.querySelector(`.${this.options.classNames.container}`);
+  this.renderTag = function(text) {
+    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
 
     //Build a tag
     const tag = document.createElement('div');
-    tag.classList.add(this.options.classNames.tag);
-    const tagContent = document.createElement('div');
-    tagContent.classList.add(this.options.classNames.tagText);
-    tagContent.innerHTML = tagText;
-    tag.insertAdjacentElement('beforeend', tagContent);
+    tag.classList.add(...this.options.classNames.tag.split(' '));
+    tag.dataset.tagelectTag = true;
+
+    const tagText = document.createElement('div');
+    tagText.classList.add(...this.options.classNames.tagText.split(' '));
+    tagText.dataset.tagelectTagText = true;
+    tagText.innerHTML = text;
+    tag.insertAdjacentElement('beforeend', tagText);
     if (this.options.removeButton) {
       // Add remove button
       const removeBtn = document.createElement('div');
-      removeBtn.classList.add(this.options.classNames.removeButton);
+      removeBtn.classList.add(...this.options.classNames.removeButton.split(' '));
+      removeBtn.dataset.tagelectRemoveButton = true;
       removeBtn.innerText = '×'; // &times; icon
       tag.insertAdjacentElement('beforeend', removeBtn);
       removeBtn.addEventListener('click', e => {
 	e.preventDefault();
-	const tagClassName = this.options.classNames.tag;
-	const tag = e.target.closest(`.${tagClassName}`);
-	const removedTagText = tag.querySelector(`.${this.options.classNames.tagText}`).innerText;
+	const tag = e.target.closest('[data-tagelect-tag]');
+	const removedTagText = tag.querySelector('[data-tagelect-tag-text]').innerText;
 	// Removing tag from state
-	this.tags = this.tags.filter(tg => tg !== tagText);
+	this.tags = this.tags.filter(tg => tg !== removedTagText);
 	this.setInputValue();
 	tag.remove();
       });
     }
-    const tagInput = container.querySelector(`.${this.options.classNames.tagInput}`);
+    const tagInput = container.querySelector('[data-tagelect-tag-input]');
     // Prepend tag to the tags
     tagInput.insertAdjacentElement('beforebegin', tag);
   }
 
   this.renderTags = function() {
-    const container = this._element.parentElement.querySelector(`.${this.options.classNames.container}`);
-    const tagElements = container.querySelectorAll(`.${this.options.classNames.tag}`);
+    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
+    const tagElements = container.querySelectorAll('[data-tagelect-tag]');
     // Remove previously rendered tags
     tagElements.forEach(tagElem => tagElem.remove());
 
@@ -199,70 +211,77 @@ function Tagelect(element, options) {
     });
   }
   this.focusOnTagInput = function() {
-    const tagInput = this.container.querySelector(`.${this.options.classNames.tagInput}`);
+    const tagInput = this.container.querySelector('[data-tagelect-tag-input]');
     const clickEvent = new Event('click');
     tagInput.dispatchEvent(clickEvent);
   }
 
   this.clearTagInput = function() {
-    const containerClass = this.options.classNames.container;
-    const tagelect = this._element.parentElement.querySelector(`.${containerClass}`);
-    const tagInput = tagelect.querySelector(`.${this.options.classNames.tagInput}`);
+    const tagelect = this._element.parentElement.querySelector('[data-tagelect-container]');
+    const tagInput = this.container.querySelector('[data-tagelect-tag-input]');
 
     tagInput.innerHTML = '';
   }
 
   this.fetchSuggestions = function(searchPhrase) {
     const count = this.options.suggestionsCount;
-    const url = `${this._element.dataset.source}?name=${searchPhrase}&count=${count}`;
-
-    const auth_token = document.getElementsByName('csrf-token')[0].value;
-
-    const headers = {
-      'Accept': 'application/javascript',
-      'X-CSRF-Token': auth_token,
-      'X-Requested-With': 'XMLHttpRequest'
+    if (!this.options.suggestionsSource) {
+      return;
     }
-    get(url, { headers }).then(function(response) {
-      this.suggestions = response.data;
-      this.setFirstSuggestion(response.data[0]);
-      // If response has no data - don't show dropdown
-      this.toggleDropdown(response.data.length > 0);
-    }.bind(this));
-  }
 
+    const url = `${this.options.suggestionsSource}?name=${searchPhrase}&count=${count}`;
+    const headers = this.options.suggestionHeaders();
+
+    get(url, { headers }).then(function(response) {
+      this.suggestions = response.data === null ? [] : response.data;
+      if (this.suggestions.length > 0) {
+	this.setFirstSuggestion(this.suggestions[0]);
+      };
+      // If no suggestions found - don't show dropdown
+      this.toggleDropdown(this.suggestions.length > 0);
+    }.bind(this))
+    .catch(function(_e) {
+	this.setFirstSuggestion(null);
+	this.toggleDropdown(false);
+      }.bind(this)
+    );
+  }
 
   // Render initial tagelect elements
   this.wrapper = document.createElement('div');
   this.wrapper.setAttribute('tabindex', '-1');
-  this.wrapper.classList.add(this.options.classNames.wrapper);
+  this.wrapper.classList.add(...this.options.classNames.wrapper.split(' '));
+  this.wrapper.dataset.tagelectWrapper = true;
+  // Track if mouse is in container (used for during blur event handling)
+  this.wrapper.addEventListener('mouseover', e => {
+    this.mouseOverContainer = true;
+  });
+  this.wrapper.addEventListener('mouseout', e => {
+    this.mouseOverContainer = false;
+  });
 
   this.container = document.createElement('div');
-  this.container.classList.add(this.options.classNames.container);
+  this.container.dataset.tagelectContainer = true;
+  this.container.classList.add(...this.options.classNames.container.split(' '));
 
   // Render the input field for entering tags
   const tagInput = document.createElement('span');
-  tagInput.classList.add(this.options.classNames.tagInput);
+  tagInput.classList.add(...this.options.classNames.tagInput.split(' '));
+  tagInput.dataset.tagelectTagInput = true;
   tagInput.setAttribute('contenteditable', true);
   tagInput.dataset.placeholder = this.options.placeholder;
   tagInput.style.minWidth = `${this.options.placeholder.length*6}px`;
-  // Track mouse position
-  document.addEventListener('mousemove', e => {
-    this.mouseX = e.pageX;
-    this.mouseY = e.pageY;
-  });
 
   tagInput.addEventListener('blur', e => {
-    const dropdown = document.querySelector('#tagelect-dropdown');
+    const dropdown = document.querySelector('[data-tagelect-dropdown]');
     // Do nothing unless dropdown is open
     if (!dropdown) {
       return;
     }
 
-    const { left, right, top, bottom } = dropdown.getBoundingClientRect();
-
-    // Close dropdown -> if mouse is outside of dropdown
-    if(this.mouseX < left || this.mouseX > right || this.mouseY < top || this.mouseY > bottom ) {
+    // If mouse is outside of the whole container
+    if(!this.mouseOverContainer) {
+      this.setFirstSuggestion(null);
       this.toggleDropdown(false);
     }
   });
@@ -270,8 +289,6 @@ function Tagelect(element, options) {
 
   // Process the keydown events for tag input
   tagInput.addEventListener('keydown', e => {
-    // TODO: check the regex validation here
-
     // Add the suggestion as tag -> if Tab is pressed while there is a suggestion
     if(e.key === 'Tab' && e.target.innerText.length > 0 && this.suggestions.length > 0) {
       e.preventDefault();
@@ -323,16 +340,13 @@ function Tagelect(element, options) {
       e.preventDefault();
     }
 
-    // If any alphanumeric or - is pressed
-    // TODO: extract this as an option?
-    //const allowedPrintable = !!e.key.match(/^\w{1}$|^\-{1}$/g);
     const alphanumeric = e.key.match(/^\w$/);
 
     // Update tag input and fetch suggestions -> if alphanum. entered or char deleted
     //
     // NOTE: The event hasn't changed the innerText yet, so we have to check for length > 1
     if(alphanumeric || (e.key === 'Backspace' && e.target.innerText.length > 1)) {
-      const tagInput = this.container.querySelector(`.${this.options.classNames.tagInput}`);
+      const tagInput = this.container.querySelector('[data-tagelect-tag-input]');
       const newText = e.key === 'Backspace' ? tagInput.innerText.slice(0, -1) : tagInput.innerText + e.key;
 
       if(!this.validateStuff(newText)) {
