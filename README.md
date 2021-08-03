@@ -4,13 +4,13 @@ Simple and neat tag input element that allows you to enter new tags,
 performs auto-completion fetching from specified source and has tag validations.
 
 # Key features
-* Allow user to add and remove tags
-* Can have an auto-complete from source
-* Tab-completes the first suggestion from source
-* Has validations for duplicate tags, maximum allowed tags and tag format
-* Has a default set of CSS style rules, but custom class names can be specified
+* Allow user to add 🆕 and remove ❌ tags
+* Can have an auto-complete 🔎 from source
+* Tab-completes 👉 the first suggestion from source
+* Has validations 🛡 for duplicate tags, maximum allowed tags and tag format
+* Has a default set of CSS style rules 🎨, but custom class names can be specified
 
-# Getting started
+# Getting started 🏄‍♀️
 
 ## Install package
 
@@ -24,7 +24,7 @@ With Yarn:
 yarn add tagelect
 ```
 
-# Usage
+# Usage 🕵️‍♀️
 
 `Tagelect` can be initialized with options or without giving any options.
 
