@@ -3,6 +3,8 @@
 Simple and neat tag input element that allows you to enter new tags,
 performs auto-completion fetching from specified source and has tag validations.
 
+![](example.gif)
+
 # Key features
 * Allow user to add 🆕 and remove ❌ tags
 * Can have an auto-complete 🔎 from source
