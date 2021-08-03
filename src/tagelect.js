@@ -19,7 +19,7 @@ function Tagelect(element, options) {
     maxTags: undefined,
     maxTagsError: "can't contain more than %TAGS% tags",
     validationRegex: undefined, // the regex that is going to be used while validating a tag
-    validationRegexMessage: 'permitted characters used', // the message shown if regexp validation fails
+    validationRegexError: 'permitted characters used', // the message shown if regexp validation fails
     noDuplicates: false, // are duplicates allowed
     noDuplicatesMessage: 'duplicates are not allowed', // the message shown if validations fail because of duplicates
     placeholder: 'Enter a tag...', // The placeholder for the tag entry
@@ -97,7 +97,7 @@ function Tagelect(element, options) {
 
     // Error if tag does not match validation regex
     if(this.options.validationRegex && !nextTag.match(this.options.validationRegex)) {
-     const error = this.buildErrorSpan(this.options.validationRegexMessage);
+     const error = this.buildErrorSpan(this.options.validationRegexError);
      this.container.insertAdjacentElement('afterend', error);
 
      return false;
