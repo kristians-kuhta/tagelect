@@ -1,6 +1,7 @@
 node_modules
 dist
 
-cypress/downloads/*
-cypress/videos/*
-cypress/screenshots/*
+cypress/tmp
+cypress/downloads
+cypress/videos
+cypress/screenshots
