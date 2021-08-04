@@ -44,26 +44,29 @@ function Tagelect(element, options) {
   this.tags = [];
   this.suggestions = [];
 
-  // Mouse position will be continuously tracked and stored in these 2 variables
-  this.mouseX = undefined;
-  this.mouseY = undefined;
-
+  // If input has a value, try to initialize tags from it
+  // by reading the value, splitting on delimiter and trimming the tag text
   if (this.element.value) {
     // Set the initial tags from hidden input value
-    this.tags = this.element.value.split(',').map((e) => e.trim());
+    this.tags = this.element.value.split(this.options.tagDelimiter).map((e) => e.trim());
   }
 
   // Hide element
   this.element.style.display = 'none';
 
-  // Serialize the tags to the actual form input value
+  // Serialize the current tags to a string (using the delimiter) and set it as input value
   function setInputValue() {
     this.element.value = this.tags.join(this.options.tagDelimiter);
   }
   this.setInputValue = setInputValue.bind(this);
 
+  function tagelectContainerElement() {
+    return this.element.parentElement.querySelector('[data-tagelect-container]');
+  }
+  this.tagelectContainerElement = tagelectContainerElement.bind(this);
+
   function setFirstSuggestion(suggestion) {
-    const container = this.element.parentElement.querySelector('[data-tagelect-container]');
+    const container = this.tagelectContainerElement();
     const tagInput = container.querySelector('[data-tagelect-tag-input]');
 
     if (suggestion) {
@@ -81,14 +84,34 @@ function Tagelect(element, options) {
   }
   this.removeValidationErrors = removeValidationErrors.bind(this);
 
+  function optionClasses(name) {
+    return this.options.classNames[name].split(' ');
+  }
+  this.optionClasses = optionClasses.bind(this);
+
+  function createTagelectElement(htmlTag, name) {
+    const tagelectElement = document.createElement(htmlTag);
+    const elementClasses = this.optionClasses(name);
+    tagelectElement.classList.add(...elementClasses);
+    tagelectElement.dataset[`tagelect${name[0].toUpperCase()}${name.slice(1)}`] = true;
+
+    return tagelectElement;
+  }
+  this.createTagelectElement = createTagelectElement.bind(this);
+
   function buildErrorSpan(errorMessage) {
-    const errorElement = document.createElement('span');
-    errorElement.classList.add(...this.options.classNames.error.split(' '));
+    const errorElement = this.createTagelectElement('span', 'error');
     errorElement.innerText = errorMessage;
-    errorElement.dataset.tagelectError = true;
+
     return errorElement;
   }
   this.buildErrorSpan = buildErrorSpan.bind(this);
+
+  function appendError(errorMessage) {
+    const errorElement = this.buildErrorSpan(errorMessage);
+    this.containerElement.insertAdjacentElement('afterend', errorElement);
+  }
+  this.appendError = appendError.bind(this);
 
   function validateStuff(nextTag) {
     // Remove previous errors
@@ -98,23 +121,20 @@ function Tagelect(element, options) {
     // Error if max tags limit reached
     if (this.options.maxTags && this.tags.length === maxTags) {
       // The maxTagsError may contain templating variable %TAGS%
-      const error = this.buildErrorSpan(this.options.maxTagsError.replace('%TAGS%', maxTags));
-      this.containerElement.insertAdjacentElement('afterend', error);
+      this.appendError(this.options.maxTagsError.replace('%TAGS%', maxTags));
 
       return false;
     }
 
     // Error if tag does not match validation regex
     if (this.options.validationRegex && !nextTag.match(this.options.validationRegex)) {
-      const error = this.buildErrorSpan(this.options.validationRegexError);
-      this.containerElement.insertAdjacentElement('afterend', error);
+      this.appendError(this.options.validationRegexError);
 
       return false;
     }
 
     if (this.options.noDuplicates && this.tags.includes(nextTag)) {
-      const error = this.buildErrorSpan(this.options.noDuplicatesMessage);
-      this.containerElement.insertAdjacentElement('afterend', error);
+      this.appendError(this.options.noDuplicatesMessage);
 
       return false;
     }
@@ -123,37 +143,40 @@ function Tagelect(element, options) {
   }
   this.validateStuff = validateStuff.bind(this);
 
+  function renderRemoveButton() {
+    const removeBtnElement = this.createTagelectElement('div', 'removeButton');
+    removeBtnElement.innerText = '×'; // &times; icon
+    removeBtnElement.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tag = e.target.closest('[data-tagelect-tag]');
+      const removedTagText = tag.querySelector('[data-tagelect-tag-text]').innerText;
+      // Removing tag from state
+      this.tags = this.tags.filter((tg) => tg !== removedTagText);
+      // Clear the tag input
+      this.setInputValue();
+      // Remove the tag from DOM
+      tag.remove();
+    });
+    return removeBtnElement;
+  }
+  this.renderRemoveButton = renderRemoveButton.bind(this);
+
   // Tag rendering
   function renderTag(text) {
-    const container = this.element.parentElement.querySelector('[data-tagelect-container]');
+    const container = this.tagelectContainerElement();
 
     // Build a tag
-    const tagElement = document.createElement('div');
-    tagElement.classList.add(...this.options.classNames.tag.split(' '));
-    tagElement.dataset.tagelectTag = true;
+    const tagElement = this.createTagelectElement('div', 'tag');
 
-    const tagTextElement = document.createElement('div');
-    tagTextElement.classList.add(...this.options.classNames.tagText.split(' '));
-    tagTextElement.dataset.tagelectTagText = true;
+    const tagTextElement = this.createTagelectElement('div', 'tagText');
     tagTextElement.innerHTML = text;
     tagElement.insertAdjacentElement('beforeend', tagTextElement);
+
     if (this.options.removeButton) {
-      // Add remove button
-      const removeBtnElement = document.createElement('div');
-      removeBtnElement.classList.add(...this.options.classNames.removeButton.split(' '));
-      removeBtnElement.dataset.tagelectRemoveButton = true;
-      removeBtnElement.innerText = '×'; // &times; icon
-      tagElement.insertAdjacentElement('beforeend', removeBtnElement);
-      removeBtnElement.addEventListener('click', (e) => {
-        e.preventDefault();
-        const tag = e.target.closest('[data-tagelect-tag]');
-        const removedTagText = tag.querySelector('[data-tagelect-tag-text]').innerText;
-        // Removing tag from state
-        this.tags = this.tags.filter((tg) => tg !== removedTagText);
-        this.setInputValue();
-        tag.remove();
-      });
+      const removeButtonElement = this.renderRemoveButton();
+      tagElement.insertAdjacentElement('beforeend', removeButtonElement);
     }
+
     const tagInput = container.querySelector('[data-tagelect-tag-input]');
     // Prepend tag to the tags
     tagInput.insertAdjacentElement('beforebegin', tagElement);
@@ -161,7 +184,7 @@ function Tagelect(element, options) {
   this.renderTag = renderTag.bind(this);
 
   function renderTags() {
-    const container = this.element.parentElement.querySelector('[data-tagelect-container]');
+    const container = this.tagelectContainerElement();
     const tagElements = container.querySelectorAll('[data-tagelect-tag]');
     // Remove previously rendered tags
     tagElements.forEach((tagElem) => tagElem.remove());
