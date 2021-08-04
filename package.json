@@ -16,7 +16,8 @@
     "test:preprocess-sass": "node-sass src/tagelect.scss > cypress/tmp/tagelect.css",
     "test:prepare": "npm run test:browserify && npm run test:preprocess-sass",
     "test:headless": "npm run test:prepare && cypress run",
-    "test": "npm run test:prepare && cypress open"
+    "test": "npm run test:prepare && cypress open",
+    "js:lint": "eslint src/"
   },
   "repository": {
     "type": "git",
