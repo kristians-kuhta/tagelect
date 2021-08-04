@@ -48,7 +48,7 @@ function Tagelect(element, options) {
   // by reading the value, splitting on delimiter and trimming the tag text
   if (this.element.value) {
     // Set the initial tags from hidden input value
-    this.tags = this.element.value.split(',').map((e) => e.trim());
+    this.tags = this.element.value.split(this.options.tagDelimiter).map((e) => e.trim());
   }
 
   // Hide element
