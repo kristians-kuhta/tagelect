@@ -119,4 +119,42 @@ describe('Validations', () => {
 	should('not.exist');
     });
   });
+
+  it('validates tag format when Tab-completing an invalid suggestion', () => {
+    cy.intercept({
+	method: 'GET',
+	url: '/suggestions?name=b&count=5'
+      },
+      {
+	body: ['b25']
+      }
+    );
+
+    cy.visit('cypress/test.html').then(window => {
+      cy.get('#tagelect-with-tags').then(input => {
+	const inputElement = input[0];
+	const options = {
+	  validationRegex: /^[a-z]*$/,
+	  suggestionsSource: '/suggestions'
+	};
+
+	inputElement.tagelect = new window.Tagelect(inputElement, options);
+      });
+
+      cy.get('#tagelect-with-tags-parent').
+	find('[data-tagelect-tag-input]').
+	click().
+	type('b');
+      cy.get('#tagelect-with-tags-parent').
+	find('[data-tagelect-tag-input]').
+	click().
+	trigger('keydown', { key: 'Tab' }); // Cypress does not support type('{tab}') yet.
+      cy.get('#tagelect-with-tags-parent [data-tagelect-error]').
+        contains('permitted characters used');
+      // Expect no new tags
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag]').should('have.length', 2);
+      // Expect tag input having the same suggestion and content
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion="25"]').should('exist').should('have.text', 'b');
+    });
+  });
 });

@@ -293,6 +293,10 @@ function Tagelect(element, options) {
     if(e.key === 'Tab' && e.target.innerText.length > 0 && this.suggestions.length > 0) {
       e.preventDefault();
       const tagText = this.suggestions[0];
+
+      if(!this.validateStuff(tagText)) {
+	return;
+      }
       this.tags = this.tags.concat(tagText);
       this.renderTags();
       this.setInputValue();
@@ -304,11 +308,10 @@ function Tagelect(element, options) {
 
     // Add tag -> if Enter pressed in non-empty input
     if((e.key === 'Enter' || e.key === ',') && e.target.innerText.length > 0) {
+      e.preventDefault();
       if(!this.validateStuff(e.target.innerText)) {
-	e.preventDefault();
 	return;
       }
-      e.preventDefault();
       this.tags = this.tags.concat(e.target.innerText);
       this.renderTags();
       this.setInputValue();
