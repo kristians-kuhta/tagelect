@@ -50,7 +50,7 @@ function Tagelect(element, options) {
 
   if (this.element.value) {
     // Set the initial tags from hidden input value
-    this.tags = this.element.value.split(',').map(e => e.trim());
+    this.tags = this.element.value.split(',').map((e) => e.trim());
   }
 
   // Hide element
@@ -75,7 +75,7 @@ function Tagelect(element, options) {
   this.setFirstSuggestion = setFirstSuggestion.bind(this);
 
   function removeValidationErrors() {
-    this.containerElement.parentElement.querySelectorAll('[data-tagelect-error]').forEach(e => {
+    this.containerElement.parentElement.querySelectorAll('[data-tagelect-error]').forEach((e) => {
       e.remove();
     });
   }
@@ -144,7 +144,7 @@ function Tagelect(element, options) {
       removeBtnElement.dataset.tagelectRemoveButton = true;
       removeBtnElement.innerText = '×'; // &times; icon
       tagElement.insertAdjacentElement('beforeend', removeBtnElement);
-      removeBtnElement.addEventListener('click', e => {
+      removeBtnElement.addEventListener('click', (e) => {
         e.preventDefault();
         const tag = e.target.closest('[data-tagelect-tag]');
         const removedTagText = tag.querySelector('[data-tagelect-tag-text]').innerText;
@@ -213,7 +213,7 @@ function Tagelect(element, options) {
         itemElement.classList.add(...this.options.classNames.dropdownItemSelected.split(' '));
       }
       itemElement.innerText = suggestion;
-      itemElement.addEventListener('click', e => {
+      itemElement.addEventListener('click', (e) => {
         if (!this.validateStuff(e.target.innerText)) {
           return;
         }
@@ -296,7 +296,7 @@ function Tagelect(element, options) {
   });
 
   // Process the keydown events for tag input
-  tagInputElement.addEventListener('keydown', e => {
+  tagInputElement.addEventListener('keydown', (e) => {
     // Add the suggestion as tag -> if Tab is pressed while there is a suggestion
     if (e.key === 'Tab' && e.target.innerText.length > 0 && this.suggestions.length > 0) {
       e.preventDefault();
