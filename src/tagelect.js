@@ -6,13 +6,11 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 // More info: https://babeljs.io/docs/en/babel-polyfill/
 
-import merge from 'lodash.merge';
-
 import { get } from 'axios';
 import _merge from 'lodash.merge';
 
 function Tagelect(element, options) {
-  this._element = element;
+  this.element = element;
   this.defaultOptions = {
     // max amount of tags that can be added
     // (it is possible it initially render more by setting input value)
@@ -50,21 +48,22 @@ function Tagelect(element, options) {
   this.mouseX = undefined;
   this.mouseY = undefined;
 
-  if (this._element.value) {
+  if (this.element.value) {
     // Set the initial tags from hidden input value
-    this.tags = this._element.value.split(',').map((e) => e.trim());
+    this.tags = this.element.value.split(',').map((e) => e.trim());
   }
 
   // Hide element
-  this._element.style.display = 'none';
+  this.element.style.display = 'none';
 
   // Serialize the tags to the actual form input value
-  this.setInputValue = function () {
-    this._element.value = this.tags.join(this.options.tagDelimiter);
-  };
+  function setInputValue() {
+    this.element.value = this.tags.join(this.options.tagDelimiter);
+  }
+  this.setInputValue = setInputValue.bind(this);
 
-  this.setFirstSuggestion = function (suggestion) {
-    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
+  function setFirstSuggestion(suggestion) {
+    const container = this.element.parentElement.querySelector('[data-tagelect-container]');
     const tagInput = container.querySelector('[data-tagelect-tag-input]');
 
     if (suggestion) {
@@ -72,31 +71,35 @@ function Tagelect(element, options) {
     } else {
       tagInput.removeAttribute('data-suggestion');
     }
-  };
+  }
+  this.setFirstSuggestion = setFirstSuggestion.bind(this);
 
-  this.removeValidationErrors = function () {
-    this.container.parentElement.querySelectorAll('[data-tagelect-error]').forEach((e) => {
+  function removeValidationErrors() {
+    this.containerElement.parentElement.querySelectorAll('[data-tagelect-error]').forEach((e) => {
       e.remove();
     });
-  };
-  this.buildErrorSpan = function (errorMessage) {
-    const error = document.createElement('span');
-    error.classList.add(...this.options.classNames.error.split(' '));
-    error.innerText = errorMessage;
-    error.dataset.tagelectError = true;
-    return error;
-  };
+  }
+  this.removeValidationErrors = removeValidationErrors.bind(this);
 
-  this.validateStuff = function (nextTag) {
+  function buildErrorSpan(errorMessage) {
+    const errorElement = document.createElement('span');
+    errorElement.classList.add(...this.options.classNames.error.split(' '));
+    errorElement.innerText = errorMessage;
+    errorElement.dataset.tagelectError = true;
+    return errorElement;
+  }
+  this.buildErrorSpan = buildErrorSpan.bind(this);
+
+  function validateStuff(nextTag) {
     // Remove previous errors
     this.removeValidationErrors();
-    const maxTags = parseInt(this.options.maxTags);
+    const maxTags = parseInt(this.options.maxTags, 10);
 
     // Error if max tags limit reached
     if (this.options.maxTags && this.tags.length === maxTags) {
       // The maxTagsError may contain templating variable %TAGS%
       const error = this.buildErrorSpan(this.options.maxTagsError.replace('%TAGS%', maxTags));
-      this.container.insertAdjacentElement('afterend', error);
+      this.containerElement.insertAdjacentElement('afterend', error);
 
       return false;
     }
@@ -104,83 +107,44 @@ function Tagelect(element, options) {
     // Error if tag does not match validation regex
     if (this.options.validationRegex && !nextTag.match(this.options.validationRegex)) {
       const error = this.buildErrorSpan(this.options.validationRegexError);
-      this.container.insertAdjacentElement('afterend', error);
+      this.containerElement.insertAdjacentElement('afterend', error);
 
       return false;
     }
 
     if (this.options.noDuplicates && this.tags.includes(nextTag)) {
       const error = this.buildErrorSpan(this.options.noDuplicatesMessage);
-      this.container.insertAdjacentElement('afterend', error);
+      this.containerElement.insertAdjacentElement('afterend', error);
 
       return false;
     }
 
     return true;
-  };
-  this.toggleDropdown = function (show) {
-    const prevDropdown = document.querySelector('[data-tagelect-dropdown]');
-    // Remove previous dropdown
-    if (prevDropdown) {
-      prevDropdown.remove();
-    }
-
-    if (!show) {
-      return;
-    }
-
-    // Else re-build a new dropdown
-    const dropdown = document.createElement('ul');
-    dropdown.classList.add(...this.options.classNames.dropdown.split(' '));
-    dropdown.dataset.tagelectDropdown = true;
-    this.suggestions.forEach((suggestion, idx) => {
-      const item = document.createElement('li');
-      item.classList.add(...this.options.classNames.dropdownItem.split(' '));
-      item.dataset.tagelectDropdownItem = true;
-      if (idx === 0) {
-        item.classList.add(...this.options.classNames.dropdownItemSelected.split(' '));
-      }
-      item.innerText = suggestion;
-      item.addEventListener('click', (e) => {
-        if (!this.validateStuff(e.target.innerText)) {
-	  return;
-        }
-
-        this.tags.push(e.target.innerText);
-        this.renderTags();
-        this.setInputValue();
-        this.clearTagInput();
-        this.focusOnTagInput();
-        this.toggleDropdown(false);
-      });
-      dropdown.insertAdjacentElement('beforeend', item);
-    });
-    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
-    container.insertAdjacentElement('afterend', dropdown);
-  };
+  }
+  this.validateStuff = validateStuff.bind(this);
 
   // Tag rendering
-  this.renderTag = function (text) {
-    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
+  function renderTag(text) {
+    const container = this.element.parentElement.querySelector('[data-tagelect-container]');
 
     // Build a tag
-    const tag = document.createElement('div');
-    tag.classList.add(...this.options.classNames.tag.split(' '));
-    tag.dataset.tagelectTag = true;
+    const tagElement = document.createElement('div');
+    tagElement.classList.add(...this.options.classNames.tag.split(' '));
+    tagElement.dataset.tagelectTag = true;
 
-    const tagText = document.createElement('div');
-    tagText.classList.add(...this.options.classNames.tagText.split(' '));
-    tagText.dataset.tagelectTagText = true;
-    tagText.innerHTML = text;
-    tag.insertAdjacentElement('beforeend', tagText);
+    const tagTextElement = document.createElement('div');
+    tagTextElement.classList.add(...this.options.classNames.tagText.split(' '));
+    tagTextElement.dataset.tagelectTagText = true;
+    tagTextElement.innerHTML = text;
+    tagElement.insertAdjacentElement('beforeend', tagTextElement);
     if (this.options.removeButton) {
       // Add remove button
-      const removeBtn = document.createElement('div');
-      removeBtn.classList.add(...this.options.classNames.removeButton.split(' '));
-      removeBtn.dataset.tagelectRemoveButton = true;
-      removeBtn.innerText = '×'; // &times; icon
-      tag.insertAdjacentElement('beforeend', removeBtn);
-      removeBtn.addEventListener('click', (e) => {
+      const removeBtnElement = document.createElement('div');
+      removeBtnElement.classList.add(...this.options.classNames.removeButton.split(' '));
+      removeBtnElement.dataset.tagelectRemoveButton = true;
+      removeBtnElement.innerText = '×'; // &times; icon
+      tagElement.insertAdjacentElement('beforeend', removeBtnElement);
+      removeBtnElement.addEventListener('click', (e) => {
         e.preventDefault();
         const tag = e.target.closest('[data-tagelect-tag]');
         const removedTagText = tag.querySelector('[data-tagelect-tag-text]').innerText;
@@ -192,11 +156,12 @@ function Tagelect(element, options) {
     }
     const tagInput = container.querySelector('[data-tagelect-tag-input]');
     // Prepend tag to the tags
-    tagInput.insertAdjacentElement('beforebegin', tag);
-  };
+    tagInput.insertAdjacentElement('beforebegin', tagElement);
+  }
+  this.renderTag = renderTag.bind(this);
 
-  this.renderTags = function () {
-    const container = this._element.parentElement.querySelector('[data-tagelect-container]');
+  function renderTags() {
+    const container = this.element.parentElement.querySelector('[data-tagelect-container]');
     const tagElements = container.querySelectorAll('[data-tagelect-tag]');
     // Remove previously rendered tags
     tagElements.forEach((tagElem) => tagElem.remove());
@@ -208,21 +173,65 @@ function Tagelect(element, options) {
     this.tags.forEach((tagText) => {
       this.renderTag(tagText);
     });
-  };
-  this.focusOnTagInput = function () {
-    const tagInput = this.container.querySelector('[data-tagelect-tag-input]');
+  }
+  this.renderTags = renderTags.bind(this);
+
+  function focusOnTagInput() {
+    const tagInput = this.containerElement.querySelector('[data-tagelect-tag-input]');
     const clickEvent = new Event('click');
     tagInput.dispatchEvent(clickEvent);
-  };
+  }
+  this.focusOnTagInput = focusOnTagInput.bind(this);
 
-  this.clearTagInput = function () {
-    const tagelect = this._element.parentElement.querySelector('[data-tagelect-container]');
-    const tagInput = this.container.querySelector('[data-tagelect-tag-input]');
+  function clearTagInput() {
+    const tagInput = this.containerElement.querySelector('[data-tagelect-tag-input]');
 
     tagInput.innerHTML = '';
-  };
+  }
+  this.clearTagInput = clearTagInput.bind(this);
 
-  this.fetchSuggestions = function (searchPhrase) {
+  function toggleDropdown(show) {
+    const prevDropdown = document.querySelector('[data-tagelect-dropdown]');
+    // Remove previous dropdown
+    if (prevDropdown) {
+      prevDropdown.remove();
+    }
+
+    if (!show) {
+      return;
+    }
+
+    // Else re-build a new dropdown
+    const dropdownElement = document.createElement('ul');
+    dropdownElement.classList.add(...this.options.classNames.dropdown.split(' '));
+    dropdownElement.dataset.tagelectDropdown = true;
+    this.suggestions.forEach((suggestion, idx) => {
+      const itemElement = document.createElement('li');
+      itemElement.classList.add(...this.options.classNames.dropdownItem.split(' '));
+      itemElement.dataset.tagelectDropdownItem = true;
+      if (idx === 0) {
+        itemElement.classList.add(...this.options.classNames.dropdownItemSelected.split(' '));
+      }
+      itemElement.innerText = suggestion;
+      itemElement.addEventListener('click', (e) => {
+        if (!this.validateStuff(e.target.innerText)) {
+          return;
+        }
+
+        this.tags.push(e.target.innerText);
+        this.renderTags();
+        this.setInputValue();
+        this.clearTagInput();
+        this.focusOnTagInput();
+        this.toggleDropdown(false);
+      });
+      dropdownElement.insertAdjacentElement('beforeend', itemElement);
+    });
+    this.containerElement.insertAdjacentElement('afterend', dropdownElement);
+  }
+  this.toggleDropdown = toggleDropdown.bind(this);
+
+  function fetchSuggestions(searchPhrase) {
     const count = this.options.suggestionsCount;
     if (!this.options.suggestionsSource) {
       return;
@@ -239,38 +248,40 @@ function Tagelect(element, options) {
       // If no suggestions found - don't show dropdown
       this.toggleDropdown(this.suggestions.length > 0);
     })
-      .catch((_e) => {
+      .catch(() => {
         this.setFirstSuggestion(null);
         this.toggleDropdown(false);
       });
-  };
+  }
+  this.fetchSuggestions = fetchSuggestions.bind(this);
 
   // Render initial tagelect elements
-  this.wrapper = document.createElement('div');
-  this.wrapper.setAttribute('tabindex', '-1');
-  this.wrapper.classList.add(...this.options.classNames.wrapper.split(' '));
-  this.wrapper.dataset.tagelectWrapper = true;
+  this.wrapperElement = document.createElement('div');
+  this.wrapperElement.setAttribute('tabindex', '-1');
+  this.wrapperElement.classList.add(...this.options.classNames.wrapper.split(' '));
+  this.wrapperElement.dataset.tagelectWrapper = true;
   // Track if mouse is in container (used for during blur event handling)
-  this.wrapper.addEventListener('mouseover', (e) => {
+  this.wrapperElement.addEventListener('mouseover', () => {
     this.mouseOverContainer = true;
   });
-  this.wrapper.addEventListener('mouseout', (e) => {
+
+  this.wrapperElement.addEventListener('mouseout', () => {
     this.mouseOverContainer = false;
   });
 
-  this.container = document.createElement('div');
-  this.container.dataset.tagelectContainer = true;
-  this.container.classList.add(...this.options.classNames.container.split(' '));
+  this.containerElement = document.createElement('div');
+  this.containerElement.dataset.tagelectContainer = true;
+  this.containerElement.classList.add(...this.options.classNames.container.split(' '));
 
   // Render the input field for entering tags
-  const tagInput = document.createElement('span');
-  tagInput.classList.add(...this.options.classNames.tagInput.split(' '));
-  tagInput.dataset.tagelectTagInput = true;
-  tagInput.setAttribute('contenteditable', true);
-  tagInput.dataset.placeholder = this.options.placeholder;
-  tagInput.style.minWidth = `${this.options.placeholder.length * 6}px`;
+  const tagInputElement = document.createElement('span');
+  tagInputElement.classList.add(...this.options.classNames.tagInput.split(' '));
+  tagInputElement.dataset.tagelectTagInput = true;
+  tagInputElement.setAttribute('contenteditable', true);
+  tagInputElement.dataset.placeholder = this.options.placeholder;
+  tagInputElement.style.minWidth = `${this.options.placeholder.length * 6}px`;
 
-  tagInput.addEventListener('blur', (e) => {
+  tagInputElement.addEventListener('blur', () => {
     const dropdown = document.querySelector('[data-tagelect-dropdown]');
     // Do nothing unless dropdown is open
     if (!dropdown) {
@@ -285,7 +296,7 @@ function Tagelect(element, options) {
   });
 
   // Process the keydown events for tag input
-  tagInput.addEventListener('keydown', (e) => {
+  tagInputElement.addEventListener('keydown', (e) => {
     // Add the suggestion as tag -> if Tab is pressed while there is a suggestion
     if (e.key === 'Tab' && e.target.innerText.length > 0 && this.suggestions.length > 0) {
       e.preventDefault();
@@ -346,7 +357,7 @@ function Tagelect(element, options) {
     //
     // NOTE: The event hasn't changed the innerText yet, so we have to check for length > 1
     if (alphanumeric || (e.key === 'Backspace' && e.target.innerText.length > 1)) {
-      const tagInput = this.container.querySelector('[data-tagelect-tag-input]');
+      const tagInput = this.containerElement.querySelector('[data-tagelect-tag-input]');
       const newText = e.key === 'Backspace' ? tagInput.innerText.slice(0, -1) : tagInput.innerText + e.key;
 
       if (!this.validateStuff(newText)) {
@@ -363,9 +374,9 @@ function Tagelect(element, options) {
   });
 
   // Add elements to DOM
-  this.container.insertAdjacentElement('beforeend', tagInput);
-  this.wrapper.insertAdjacentElement('beforeend', this.container);
-  this._element.insertAdjacentElement('beforebegin', this.wrapper);
+  this.containerElement.insertAdjacentElement('beforeend', tagInputElement);
+  this.wrapperElement.insertAdjacentElement('beforeend', this.containerElement);
+  this.element.insertAdjacentElement('beforebegin', this.wrapperElement);
 
   // Render the initial tags
   this.renderTags();
