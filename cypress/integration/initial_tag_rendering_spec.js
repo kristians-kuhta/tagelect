@@ -12,4 +12,4 @@ describe('Initial tag rendering', () => {
       cy.get('#tagelect-parent [data-tagelect-tag]').should('not.exist');
     });
   });
- });
+});

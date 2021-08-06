@@ -1,28 +1,26 @@
 describe('Tag entry', () => {
   it('adds a tag that was not in the suggestions', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      {
-	body: ['b-tag-1', 'b-tag-2']
-      }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['b-tag-1', 'b-tag-2'],
+    });
 
     cy.intercept({
-	method: 'GET',
-	url: /\/suggestions(?!\?name=b&count=5)/
-      },
-      {
-	body: []
-      }
-    );
+      method: 'GET',
+      url: /\/suggestions(?!\?name=b&count=5)/,
+    },
+    {
+      body: [],
+    });
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
-      cy.get('#tagelect-with-tags-parent').
-      find('[data-tagelect-tag-input]').
-      click().
-      type('BTC{enter}');
+      cy.get('#tagelect-with-tags-parent')
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('BTC{enter}');
 
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag]:nth-child(3)').contains('BTC');
     });
@@ -30,15 +28,14 @@ describe('Tag entry', () => {
 
   it('adds the first suggestion after pressing Tab', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      {
-	body: ['b-tag-1', 'b-tag-2']
-      }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['b-tag-1', 'b-tag-2'],
+    });
 
-    cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' },  () => {
+    cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
 	  .find('[data-tagelect-tag-input]')
 	  .click()
@@ -51,13 +48,12 @@ describe('Tag entry', () => {
 
   it('adds the first suggestion after clicking on it', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      {
-	body: ['b-tag-1', 'b-tag-2']
-      }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['b-tag-1', 'b-tag-2'],
+    });
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
@@ -74,13 +70,12 @@ describe('Tag entry', () => {
 
   it('adds a suggestion that is not first after clicking on it', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      {
-	body: ['b-tag-1', 'b-tag-2']
-      }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['b-tag-1', 'b-tag-2'],
+    });
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
@@ -100,13 +95,12 @@ describe('Tag entry', () => {
 
   it('does not show suggestions if none present in the valid response from the source', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      {
-	body: []
-      }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: [],
+    });
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
@@ -121,17 +115,16 @@ describe('Tag entry', () => {
 
   it('does not show suggestions if response from suggestions source was not successful', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      { statusCode: 500 }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    { statusCode: 500 });
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
 	  .find('[data-tagelect-tag-input]')
 	  .click()
-	  .type('b')
+	  .type('b');
       cy.get('#tagelect-with-tags-parent [data-tagelect-dropdown]').should('not.exist');
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input]')
         .should('not.have.attr', 'data-suggestion');
@@ -140,13 +133,12 @@ describe('Tag entry', () => {
 
   it('does not show suggestions if response from suggestions had an empty body', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      {
-	body: null
-      }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: null,
+    });
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
@@ -159,15 +151,14 @@ describe('Tag entry', () => {
     });
   });
 
- it('remove suggestions after the focusing away from tag input', () => {
+  it('remove suggestions after the focusing away from tag input', () => {
     cy.intercept({
-	method: 'GET',
-	url: '/suggestions?name=b&count=5'
-      },
-      {
-	body: ['bird']
-      }
-    );
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['bird'],
+    });
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
@@ -184,5 +175,5 @@ describe('Tag entry', () => {
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion]')
 	  .should('not.exist');
     });
- });
+  });
 });

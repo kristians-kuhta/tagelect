@@ -2,7 +2,7 @@ describe('CSS customizability', () => {
   it('allows user to override all of the CSS classes', () => {
     cy.intercept(
       { method: 'GET', url: '/suggestions?name=b&count=5' },
-      { body: ['b-tag-1'] }
+      { body: ['b-tag-1'] },
     );
 
     cy.renderTagelectPage(
@@ -23,8 +23,8 @@ describe('CSS customizability', () => {
           dropdown: 'tagelect-dropdown-2',
           dropdownItem: 'tagelect-dropdown-item-2',
           dropdownItemSelected: 'tagelect-dropdown-item--selected-2',
-          error: 'tagelect-error-2'
-        }
+          error: 'tagelect-error-2',
+        },
       },
       () => {
         // Make sure the wrapper is being rendered
@@ -32,8 +32,10 @@ describe('CSS customizability', () => {
         cy.get('#tagelect-with-tags-parent').children('.tagelect-2').should('have.length', 1);
         cy.get('.tagelect-2').children('.tagelect-content-2').should('have.length', 1);
         cy.get('.tagelect-content-2').children('.tagelect-tag-2').should('have.length', 2);
-        cy.get('.tagelect-content-2').children('.tagelect-tag-2').first().children('.tagelect-tag-text-2').should('exist');
-        cy.get('.tagelect-content-2').children('.tagelect-tag-2').first().children('.tagelect-tag-remove-btn-2').should('exist');
+        cy.get('.tagelect-content-2').children('.tagelect-tag-2').first().children('.tagelect-tag-text-2')
+          .should('exist');
+        cy.get('.tagelect-content-2').children('.tagelect-tag-2').first().children('.tagelect-tag-remove-btn-2')
+          .should('exist');
         cy.get('.tagelect-content-2 > .tagelect-input-2:nth-child(3)').should('exist');
 
         cy.get('.tagelect-content-2 > .tagelect-input-2').click().type('b');
@@ -43,7 +45,7 @@ describe('CSS customizability', () => {
 
         cy.get('.tagelect-content-2 > .tagelect-input-2').click().type('a');
         cy.get('.tagelect-2 .tagelect-error-2').should('exist');
-      }
-    )
+      },
+    );
   });
 });

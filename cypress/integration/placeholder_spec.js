@@ -15,7 +15,7 @@ describe('Placeholder behaviour', () => {
         cy.get('#tagelect-parent')
           .find('[data-tagelect-tag-input][data-placeholder="Custom placeholder"]')
           .should('exist');
-      }
+      },
     );
   });
- });
+});

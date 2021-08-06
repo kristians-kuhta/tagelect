@@ -11,7 +11,6 @@ describe('Tag deletion', () => {
 
   it('removes a tag after click on remove button', () => {
     cy.renderTagelectPage('tagelect-with-tags', {}, () => {
-
       // NOTE: tag-1, tag-2 comes from test.html
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag]:nth-child(1)').contains('tag-1');
       cy.get('#tagelect-with-tags-parent')
@@ -20,9 +19,8 @@ describe('Tag deletion', () => {
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag]:nth-child(2)').should('not.exist');
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag]:nth-child(1)').contains('tag-2');
       // TODO: should input have focus here?
-      //cy.get('[data-tagelect-tag-input]').should('have.focus');
+      // cy.get('[data-tagelect-tag-input]').should('have.focus');
     });
-
   });
 
   it('does not remove tags if Backspace is pressed and tag input is not empty', () => {
