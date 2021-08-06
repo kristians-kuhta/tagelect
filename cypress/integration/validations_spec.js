@@ -2,11 +2,11 @@ describe('Validations', () => {
   it('validates maximum allowed tags with default error message when validation enabled', () => {
     cy.renderTagelectPage('tagelect-with-tags', { maxTags: 2 }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('a');
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('a');
       cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
-	  .contains("can't contain more than 2 tags");
+        .contains("can't contain more than 2 tags");
     });
   });
 
@@ -28,8 +28,8 @@ describe('Validations', () => {
   it('validates tag format with the default error message when validation enabled', () => {
     cy.renderTagelectPage('tagelect-with-tags', { validationRegex: /[0-9]/ }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
+        .find('[data-tagelect-tag-input]')
+        .click()
         .type('a');
       cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
         .contains('permitted characters used');
@@ -41,13 +41,14 @@ describe('Validations', () => {
       'tagelect-with-tags',
       { validationRegex: /[0-9]/, validationRegexError: 'Only digits allowed' },
       () => {
-      cy.get('#tagelect-with-tags-parent')
-        .find('[data-tagelect-tag-input]')
-        .click()
-        .type('a');
-      cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
-        .contains('Only digits allowed');
-    });
+        cy.get('#tagelect-with-tags-parent')
+          .find('[data-tagelect-tag-input]')
+          .click()
+          .type('a');
+        cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
+          .contains('Only digits allowed');
+      },
+    );
   });
 
   it('removes max tags validation error if tag input is cleared', () => {
@@ -97,24 +98,25 @@ describe('Validations', () => {
     cy.renderTagelectPage(
       'tagelect-with-tags',
       {
-	validationRegex: /^[a-z]*$/,
-	suggestionsSource: '/suggestions',
+        validationRegex: /^[a-z]*$/,
+        suggestionsSource: '/suggestions',
       },
       () => {
-	cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('b');
-	cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .trigger('keydown', { key: 'Tab' }); // Cypress does not support type('{tab}') yet.
-	cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
-	  .contains('permitted characters used');
-	// Expect no new tags
-	cy.get('#tagelect-with-tags-parent [data-tagelect-tag]').should('have.length', 2);
-	// Expect tag input having the same suggestion and content
-	cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion="25"]').should('exist').should('have.text', 'b');
-    });
+        cy.get('#tagelect-with-tags-parent')
+          .find('[data-tagelect-tag-input]')
+          .click()
+          .type('b');
+        cy.get('#tagelect-with-tags-parent')
+          .find('[data-tagelect-tag-input]')
+          .click()
+          .trigger('keydown', { key: 'Tab' }); // Cypress does not support type('{tab}') yet.
+        cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
+          .contains('permitted characters used');
+        // Expect no new tags
+        cy.get('#tagelect-with-tags-parent [data-tagelect-tag]').should('have.length', 2);
+        // Expect tag input having the same suggestion and content
+        cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion="25"]').should('exist').should('have.text', 'b');
+      },
+    );
   });
 });

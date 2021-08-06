@@ -10,7 +10,6 @@ describe('CSS customizability', () => {
       {
         removeButton: true,
         maxTags: 3,
-        suggestionsSource: null, // Do not perform suggestion fetching
         suggestionsSource: '/suggestions', // So that the dropdown can be inspected
         classNames: {
           wrapper: 'tagelect-2',

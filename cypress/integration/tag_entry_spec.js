@@ -37,10 +37,10 @@ describe('Tag entry', () => {
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('b')
-	  .trigger('keydown', { key: 'Tab' }); // Cypress does not support type('{tab}') yet.
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('b')
+        .trigger('keydown', { key: 'Tab' }); // Cypress does not support type('{tab}') yet.
 
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag]:nth-child(3)').contains('b-tag-1');
     });
@@ -57,9 +57,9 @@ describe('Tag entry', () => {
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('b');
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('b');
       // Needed so that blur on tag input works correctly
       cy.get('[data-tagelect-wrapper]').trigger('mouseover');
       cy.get('#tagelect-with-tags-parent')
@@ -79,9 +79,9 @@ describe('Tag entry', () => {
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('b');
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('b');
 
       // Needed so that blur on tag input works correctly
       cy.get('[data-tagelect-wrapper]').trigger('mouseover');
@@ -122,9 +122,9 @@ describe('Tag entry', () => {
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('b');
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('b');
       cy.get('#tagelect-with-tags-parent [data-tagelect-dropdown]').should('not.exist');
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input]')
         .should('not.have.attr', 'data-suggestion');
@@ -142,9 +142,9 @@ describe('Tag entry', () => {
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('b');
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('b');
       cy.get('#tagelect-with-tags-parent [data-tagelect-dropdown]').should('not.exist');
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input]:not([data-suggestion])')
         .should('exist');
@@ -162,9 +162,9 @@ describe('Tag entry', () => {
 
     cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
       cy.get('#tagelect-with-tags-parent')
-	  .find('[data-tagelect-tag-input]')
-	  .click()
-	  .type('b');
+        .find('[data-tagelect-tag-input]')
+        .click()
+        .type('b');
       cy.get('#tagelect-with-tags-parent [data-tagelect-dropdown]').should('exist');
       // Simulate users mouse leaving tagelect wrapper and clicking somewhere
       cy.get('#tagelect-with-tags-parent').find('[data-tagelect-wrapper]').trigger('mouseout');
@@ -173,7 +173,7 @@ describe('Tag entry', () => {
       // Dropdown is not visible and first suggestion isn't shown in tag input
       cy.get('#tagelect-with-tags-parent [data-tagelect-dropdown]').should('not.exist');
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion]')
-	  .should('not.exist');
+        .should('not.exist');
     });
   });
 });
