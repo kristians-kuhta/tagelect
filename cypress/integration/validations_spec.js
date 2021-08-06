@@ -1,55 +1,38 @@
 describe('Validations', () => {
   it('validates maximum allowed tags with default error message when validation enabled', () => {
-    cy.visit('cypress/test.html').then(window => {
-      cy.get('#tagelect-with-tags').then(input => {
-	const inputElement = input[0];
-	const options = { maxTags: 2 };
-
-	inputElement.tagelect = new window.Tagelect(inputElement, options);
-      });
-
-      cy.get('#tagelect-with-tags-parent').
-	find('[data-tagelect-tag-input]').
-	click().
-	type('a');
-      cy.get('#tagelect-with-tags-parent [data-tagelect-error]').
-	contains("can't contain more than 2 tags");
+    cy.renderTagelectPage('tagelect-with-tags', { maxTags: 2 }, () => {
+      cy.get('#tagelect-with-tags-parent')
+	  .find('[data-tagelect-tag-input]')
+	  .click()
+	  .type('a');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
+	  .contains("can't contain more than 2 tags");
     });
   });
 
   it('validates maximum allowed tags with custom error message when validation enabled', () => {
-    cy.visit('cypress/test.html').then(window => {
-      cy.get('#tagelect-with-tags').then(input => {
-	const inputElement = input[0];
-	const options = { maxTags: 2, maxTagsError: 'Please, no more than %TAGS% tags' };
-
-	inputElement.tagelect = new window.Tagelect(inputElement, options);
-      });
-
-      cy.get('#tagelect-with-tags-parent').
-	find('[data-tagelect-tag-input]').
-	click().
-	type('a');
-      cy.get('#tagelect-with-tags-parent [data-tagelect-error]').
-	contains('Please, no more than 2 tags');
-    });
+    cy.renderTagelectPage(
+      'tagelect-with-tags',
+      { maxTags: 2, maxTagsError: 'Please, no more than %TAGS% tags' },
+      () => {
+        cy.get('#tagelect-with-tags-parent')
+          .find('[data-tagelect-tag-input]')
+          .click()
+          .type('a');
+        cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
+          .contains('Please, no more than 2 tags');
+      }
+    );
   });
 
   it('validates tag format with the default error message when validation enabled', () => {
-    cy.visit('cypress/test.html').then(window => {
-      cy.get('#tagelect-with-tags').then(input => {
-	const inputElement = input[0];
-	const options = { validationRegex: /[0-9]/ };
-
-	inputElement.tagelect = new window.Tagelect(inputElement, options);
-      });
-
-      cy.get('#tagelect-with-tags-parent').
-	find('[data-tagelect-tag-input]').
-	click().
-	type('a');
-      cy.get('#tagelect-with-tags-parent [data-tagelect-error]').
-	contains('permitted characters used');
+    cy.renderTagelectPage('tagelect-with-tags', { validationRegex: /[0-9]/ }, () => {
+      cy.get('#tagelect-with-tags-parent')
+	  .find('[data-tagelect-tag-input]')
+	  .click()
+        .type('a');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-error]')
+        .contains('permitted characters used');
     });
   });
 
