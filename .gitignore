@@ -5,3 +5,7 @@ cypress/tmp
 cypress/downloads
 cypress/videos
 cypress/screenshots
+
+coverage
+.nyc_output
+

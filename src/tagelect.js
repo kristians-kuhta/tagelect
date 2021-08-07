@@ -19,7 +19,7 @@ function Tagelect(element, options) {
     validationRegex: undefined, // the regex that is going to be used while validating a tag
     validationRegexError: 'permitted characters used', // the message shown if regexp validation fails
     noDuplicates: false, // are duplicates allowed
-    noDuplicatesMessage: 'duplicates are not allowed', // the message shown if validations fail because of duplicates
+    noDuplicatesError: 'duplicates are not allowed', // the message shown if validations fail because of duplicates
     placeholder: 'Enter a tag...', // The placeholder for the tag entry
     removeButton: true, // Show remove button
     tagDelimiter: ',', // The delimiter used when setting form input value
@@ -134,7 +134,7 @@ function Tagelect(element, options) {
     }
 
     if (this.options.noDuplicates && this.tags.includes(nextTag)) {
-      this.appendError(this.options.noDuplicatesMessage);
+      this.appendError(this.options.noDuplicatesError);
 
       return false;
     }
@@ -387,7 +387,6 @@ function Tagelect(element, options) {
         return;
       }
       this.fetchSuggestions(newText);
-      this.toggleDropdown(true);
     }
 
     if (e.key === 'Backspace' && e.target.innerText.length === 1) {
