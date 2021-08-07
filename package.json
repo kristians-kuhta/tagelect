@@ -1,6 +1,6 @@
 {
   "name": "tagelect",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Tag input field with autocomplete and validations.",
   "main": "./dist/tagelect.js",
   "files": [
