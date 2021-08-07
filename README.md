@@ -1,5 +1,9 @@
 # Tagelect.js
 
+![https://img.shields.io/github/workflow/status/kristians-kuhta/tagelect/Pipeline](https://github.com/kristians-kuhta/tagelect/actions)
+[![codecov](https://codecov.io/gh/kristians-kuhta/tagelect/branch/master/graph/badge.svg?token=Y0ZSEI909E)](https://codecov.io/gh/kristians-kuhta/tagelect)
+![https://img.shields.io/npm/v/tagelect](https://www.npmjs.com/package/tagelect)
+
 Simple and neat tag input element that allows you to enter new tags,
 performs auto-completion fetching from specified source and has tag validations.
 
