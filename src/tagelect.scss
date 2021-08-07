@@ -12,6 +12,7 @@
   --tagelect-dropdown-hover-color: #232323;
   --tagelect-dropdown-hover-bg-color: #e3e3e3;
   --tagelect-suggestion-color: #d9d9d9;
+  --tagelect-error-color: #ea0000;
 }
 
 .tagelect-content {
@@ -81,5 +82,9 @@
     color: var(--tagelect-dropdown-hover-color);
     background-color: var(--tagelect-dropdown-hover-bg-color);
   }
+}
+
+.tagelect-error {
+  color: var(--tagelect-error-color);
 }
 

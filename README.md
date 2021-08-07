@@ -115,4 +115,5 @@ These are the default variable values:
   --tagelect-dropdown-hover-color: #232323;
   --tagelect-dropdown-hover-bg-color: #e3e3e3;
   --tagelect-suggestion-color: #d9d9d9;
+  --tagelect-error-color: #ea0000;
 ```
