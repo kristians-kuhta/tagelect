@@ -85,7 +85,7 @@ yarn add tagelect
 | validationRegex      | Regex    | if set validates that new tags match the regex            |
 | validationRegexError | String   | validation message for tag regex validation               |
 | noDuplicates         | Boolean  | if true, duplicates tags are not allowed                  |
-| noDuplicatesMessage  | String   | validation message for duplicate tags validation          |
+| noDuplicatesError    | String   | validation message for duplicate tags validation          |
 | placeholder          | String   | placeholder for the tag input                             |
 | removeButton         | Boolean  | if true, tags have a remove button                        |
 | tagDelimiter         | String   | delimiter used to read or write to input value            |
