@@ -119,4 +119,62 @@ describe('Validations', () => {
       },
     );
   });
+
+  it('validates no duplicate tags with the default error message when validation enabled', () => {
+    cy.renderTagelectPage('tagelect', { noDuplicates: true }, () => {
+      cy.get('[data-tagelect-tag-input').click().type('a{enter}');
+      cy.get('[data-tagelect-tag-input').click().type('a{enter}');
+      cy.get('#tagelect-parent')
+        .find('[data-tagelect-error]')
+        .should('exist')
+        .should('have.text', 'duplicates are not allowed');
+    });
+  });
+
+  it('validates no duplicate tags with the custom error message when validation enabled', () => {
+    cy.renderTagelectPage('tagelect', { noDuplicates: true, noDuplicatesError: 'no duplicates' }, () => {
+      cy.get('[data-tagelect-tag-input').click().type('a{enter}');
+      cy.get('[data-tagelect-tag-input').click().type('a{enter}');
+      cy.get('#tagelect-parent')
+        .find('[data-tagelect-error]')
+        .should('exist')
+        .should('have.text', 'no duplicates');
+    });
+  });
+
+  it('does not validate no duplicate tags when validation disabled', () => {
+    cy.renderTagelectPage('tagelect', {}, () => {
+      cy.get('[data-tagelect-tag-input').click().type('a{enter}');
+      cy.get('[data-tagelect-tag-input').click().type('a{enter}');
+      cy.get('#tagelect-parent').find('[data-tagelect-error]').should('not.exist');
+    });
+  });
+
+  it('does not allow for the user to select a dropdown suggestion that causes validations to fail', () => {
+    cy.intercept({
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['b25'],
+    });
+
+    cy.renderTagelectPage('tagelect', { validationRegex: /^\w$/, suggestionsSource: '/suggestions' }, () => {
+      cy.get('#tagelect-parent [data-tagelect-tag-input').click().type('b');
+      cy.get('#tagelect-parent [data-tagelect-dropdown]').find('[data-tagelect-dropdown-item]:first-child').click();
+      cy.get('#tagelect-parent [data-tagelect-error]').should('exist');
+      cy.get('#tagelect-parent [data-tagelect-tag]').should('not.exist');
+      cy.get('#tagelect-parent [data-tagelect-tag-input').should('have.text', 'b');
+      cy.get('#tagelect-parent [data-tagelect-dropdown]').should('exist');
+    });
+  });
+
+  it('removes validation message when input is cleared out', () => {
+    cy.renderTagelectPage('tagelect', { validationRegex: /^\d*$/ }, () => {
+      cy.get('#tagelect-parent [data-tagelect-tag-input').click().type('b');
+      cy.get('#tagelect-parent [data-tagelect-error]').should('exist');
+      cy.get('#tagelect-parent [data-tagelect-tag-input').click().type('{backspace}');
+      cy.get('#tagelect-parent [data-tagelect-error]').should('not.exist');
+    });
+  });
 });
