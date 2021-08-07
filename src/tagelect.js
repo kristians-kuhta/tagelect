@@ -265,9 +265,8 @@ function Tagelect(element, options) {
 
     get(url, { headers }).then((response) => {
       this.suggestions = response.data === null ? [] : response.data;
-      if (this.suggestions.length > 0) {
-        this.setFirstSuggestion(this.suggestions[0]);
-      }
+      this.setFirstSuggestion(this.suggestions[0] || null);
+
       // If no suggestions found - don't show dropdown
       this.toggleDropdown(this.suggestions.length > 0);
     })
