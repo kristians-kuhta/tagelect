@@ -5,7 +5,7 @@ performs auto-completion fetching from specified source and has tag validations.
 
 ![](example.gif)
 
-# Key features
+# Key features 📦
 * Allow user to add 🆕 and remove ❌ tags
 * Can have an auto-complete 🔎 from source
 * Tab-completes 👉 the first suggestion from source
@@ -93,3 +93,26 @@ yarn add tagelect
 | suggestionHeaders    | Function | func. returning headers to send when fetching suggestions |
 | suggestionsSource    | String   | if set, enables the fetching of suggestions from this URI |
 | classNames           | Object   | can be used to set custom classes for various elements    |
+
+# CSS customization
+
+`Tagelect` can be initialized with custom CSS classes (by providing the [classNames](#with-options) option),
+but you can also use the default CSS classes and re-assign the CSS variables with your own colors to match your color scheme.
+
+These are the default variable values:
+
+```css
+  --tagelect-text-color: #232323;
+  --tagelect-bg-color: white;
+  --tagelect-border-color: #d9d9d9;
+  --tagelect-tag-bg-color: #d9d9d9;
+  --tagelect-placeholder-color: #d9d9d9;
+  --tagelect-remove-btn-color: #232323;
+  --tagelect-remove-btn-hover-color: #ea0000;
+  --tagelect-dropdown-bg-color: white;
+  --tagelect-dropdown-text-color: #232323;
+  --tagelect-dropdown-border-color: #d9d9d9;
+  --tagelect-dropdown-hover-color: #232323;
+  --tagelect-dropdown-hover-bg-color: #e3e3e3;
+  --tagelect-suggestion-color: #d9d9d9;
+```
