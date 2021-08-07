@@ -387,7 +387,6 @@ function Tagelect(element, options) {
         return;
       }
       this.fetchSuggestions(newText);
-      this.toggleDropdown(true);
     }
 
     if (e.key === 'Backspace' && e.target.innerText.length === 1) {
