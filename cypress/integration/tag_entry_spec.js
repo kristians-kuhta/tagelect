@@ -151,7 +151,7 @@ describe('Tag entry', () => {
     });
   });
 
-  it('remove suggestions after the focusing away from tag input', () => {
+  it('removes suggestions after the focusing away from tag input', () => {
     cy.intercept({
       method: 'GET',
       url: '/suggestions?name=b&count=5',
@@ -174,6 +174,65 @@ describe('Tag entry', () => {
       cy.get('#tagelect-with-tags-parent [data-tagelect-dropdown]').should('not.exist');
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion]')
         .should('not.exist');
+    });
+  });
+
+  it('looses focus without opening dropdown or setting a suggestion', () => {
+    cy.intercept({
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['bird'],
+    });
+
+    cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
+      cy.get('#tagelect-with-tags-parent')
+        .find('[data-tagelect-tag-input]')
+        .click();
+      // This is needed to simulate user mouseover so that blur on input works correctly
+      cy.get('#tagelect-with-tags-parent')
+        .find('[data-tagelect-wrapper]')
+        .trigger('mouseover');
+      cy.get('#tagelect-with-tags-parent')
+        .find('[data-tagelect-tag-input]')
+        .trigger('blur');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-dropdown]').should('not.exist');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
+    });
+  });
+
+  it('does nothing if Enter is pressed in an empty tag input', () => {
+    cy.renderTagelectPage('tagelect', {}, () => {
+      cy.get('#tagelect-parent [data-tagelect-tag-input]')
+        .click()
+        .type('{enter}')
+        .should('have.focus')
+        .should('not.have.text');
+    });
+  });
+
+  it('does not add suggestion data attribute if the input no longer has suggestions', () => {
+    cy.intercept({
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['bird'],
+    });
+
+    cy.intercept({
+      method: 'GET',
+      url: '/suggestions?name=be&count=5',
+    },
+    {
+      body: [],
+    });
+
+    cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input]').click().type('b');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input]').click().type('e');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
     });
   });
 });

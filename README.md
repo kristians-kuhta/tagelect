@@ -1,5 +1,9 @@
 # Tagelect.js
 
+[![build](https://img.shields.io/github/workflow/status/kristians-kuhta/tagelect/Pipeline)](https://github.com/kristians-kuhta/tagelect/actions)
+[![codecov](https://codecov.io/gh/kristians-kuhta/tagelect/branch/master/graph/badge.svg?token=Y0ZSEI909E)](https://codecov.io/gh/kristians-kuhta/tagelect)
+[![npm](https://img.shields.io/npm/v/tagelect)](https://www.npmjs.com/package/tagelect)
+
 Simple and neat tag input element that allows you to enter new tags,
 performs auto-completion fetching from specified source and has tag validations.
 
@@ -85,7 +89,7 @@ yarn add tagelect
 | validationRegex      | Regex    | if set validates that new tags match the regex            |
 | validationRegexError | String   | validation message for tag regex validation               |
 | noDuplicates         | Boolean  | if true, duplicates tags are not allowed                  |
-| noDuplicatesMessage  | String   | validation message for duplicate tags validation          |
+| noDuplicatesError    | String   | validation message for duplicate tags validation          |
 | placeholder          | String   | placeholder for the tag input                             |
 | removeButton         | Boolean  | if true, tags have a remove button                        |
 | tagDelimiter         | String   | delimiter used to read or write to input value            |
@@ -115,4 +119,5 @@ These are the default variable values:
   --tagelect-dropdown-hover-color: #232323;
   --tagelect-dropdown-hover-bg-color: #e3e3e3;
   --tagelect-suggestion-color: #d9d9d9;
+  --tagelect-error-color: #ea0000;
 ```
