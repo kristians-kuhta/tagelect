@@ -211,4 +211,28 @@ describe('Tag entry', () => {
         .should('not.have.text');
     });
   });
+
+  it('does not add suggestion data attribute if the input no longer has suggestions', () => {
+    cy.intercept({
+      method: 'GET',
+      url: '/suggestions?name=b&count=5',
+    },
+    {
+      body: ['bird'],
+    });
+
+    cy.intercept({
+      method: 'GET',
+      url: '/suggestions?name=be&count=5',
+    },
+    {
+      body: [],
+    });
+
+    cy.renderTagelectPage('tagelect-with-tags', { suggestionsSource: '/suggestions' }, () => {
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input]').click().type('b');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input]').click().type('e');
+      cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
+    });
+  });
 });
