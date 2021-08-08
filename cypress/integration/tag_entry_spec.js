@@ -235,4 +235,49 @@ describe('Tag entry', () => {
       cy.get('#tagelect-with-tags-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
     });
   });
+
+  it('only adds suggestion data if the tag input is a substring of first suggestion', () => {
+    cy.intercept({
+      method: 'GET',
+      url: /\/suggestions(?!\?name=b&count=5)/,
+    },
+    {
+      body: ['Alabama'],
+    });
+
+    cy.renderTagelectPage('tagelect', { suggestionsSource: '/suggestions' }, () => {
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('a');
+      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('l');
+      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
+
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('{backspace}{backspace}Al');
+      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').then
+      ($el => {
+        expect($el).to.have.data('suggestion', 'abama');
+      });
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('A');
+      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
+    });
+  });
+
+  it('only allows suggestion tab completion if the tag input is a substring of first suggestion', () => {
+    cy.intercept({
+      method: 'GET',
+      url: /\/suggestions(?!\?name=b&count=5)/,
+    },
+    {
+      body: ['Alabama'],
+    });
+
+    cy.renderTagelectPage('tagelect', { suggestionsSource: '/suggestions' }, () => {
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('a');
+      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
+      cy.get('#tagelect-parent [data-tagelect-tag-input]')
+        .trigger('keydown', { key: 'Tab' }); // Cypress does not support type('{tab}') yet.
+      cy.get('#tagelect-parent [data-tagelect-tag]').should('not.exist');
+      cy.get('#tagelect-parent [data-tagelect-tag-input]')
+        .should('have.text', 'a');
+    });
+  });
 });
