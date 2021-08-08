@@ -324,7 +324,16 @@ function Tagelect(element, options) {
   tagInputElement.dataset.placeholder = this.options.placeholder;
   tagInputElement.style.minWidth = `${this.options.placeholder.length * 6}px`;
 
+  ['click', 'focus'].forEach((eventType) => {
+    tagInputElement.addEventListener(eventType, (evt) => {
+      if (evt.target.innerText.length > 0) {
+        this.fetchSuggestions(evt.target.innerText);
+      }
+    });
+  });
+
   tagInputElement.addEventListener('blur', () => {
+    this.suggestions = [];
     const dropdown = document.querySelector('[data-tagelect-dropdown]');
     // Do nothing unless dropdown is open
     if (!dropdown) {
