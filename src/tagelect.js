@@ -65,6 +65,18 @@ function Tagelect(element, options) {
   }
   this.tagelectContainerElement = tagelectContainerElement.bind(this);
 
+  function tabCompleteAllowed(suggestion) {
+    const container = this.tagelectContainerElement();
+    const tagInput = container.querySelector('[data-tagelect-tag-input]');
+
+    if (!suggestion || tagInput.innerText.length === 0) {
+      return false;
+    }
+
+    return suggestion.startsWith(tagInput.innerText);
+  }
+  this.tabCompleteAllowed = tabCompleteAllowed.bind(this);
+
   function setFirstSuggestion(suggestion) {
     const container = this.tagelectContainerElement();
     const tagInput = container.querySelector('[data-tagelect-tag-input]');
@@ -265,7 +277,16 @@ function Tagelect(element, options) {
 
     get(url, { headers }).then((response) => {
       this.suggestions = response.data === null ? [] : response.data;
-      this.setFirstSuggestion(this.suggestions[0] || null);
+      let firstSuggestion = this.suggestions[0] || null;
+
+      // If typed "a" and the source returned "Alabama" the data-suggestion should
+      // not be set, because the resulting Tab-completion would look like:
+      //   "aAlabama"
+      if (!this.tabCompleteAllowed(firstSuggestion)) {
+        firstSuggestion = null;
+      }
+
+      this.setFirstSuggestion(firstSuggestion);
 
       // If no suggestions found - don't show dropdown
       this.toggleDropdown(this.suggestions.length > 0);
@@ -319,8 +340,8 @@ function Tagelect(element, options) {
 
   // Process the keydown events for tag input
   tagInputElement.addEventListener('keydown', (e) => {
-    // Add the suggestion as tag -> if Tab is pressed while there is a suggestion
-    if (e.key === 'Tab' && e.target.innerText.length > 0 && this.suggestions.length > 0) {
+    // Add the suggestion as tag -> if Tab is pressed while there is a valid suggestion
+    if (e.key === 'Tab' && this.tabCompleteAllowed(this.suggestions[0])) {
       e.preventDefault();
       const tagText = this.suggestions[0];
 
