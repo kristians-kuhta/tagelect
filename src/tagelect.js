@@ -237,13 +237,11 @@ function Tagelect(element, options) {
     }
 
     // Else re-build a new dropdown
-    const dropdownElement = document.createElement('ul');
-    dropdownElement.classList.add(...this.options.classNames.dropdown.split(' '));
-    dropdownElement.dataset.tagelectDropdown = true;
+    const dropdownElement = this.createTagelectElement('ul', 'dropdown');
+
     this.suggestions.forEach((suggestion, idx) => {
-      const itemElement = document.createElement('li');
-      itemElement.classList.add(...this.options.classNames.dropdownItem.split(' '));
-      itemElement.dataset.tagelectDropdownItem = true;
+      const itemElement = this.createTagelectElement('li', 'dropdownItem');
+
       if (idx === 0) {
         itemElement.classList.add(...this.options.classNames.dropdownItemSelected.split(' '));
       }
@@ -299,10 +297,8 @@ function Tagelect(element, options) {
   this.fetchSuggestions = fetchSuggestions.bind(this);
 
   // Render initial tagelect elements
-  this.wrapperElement = document.createElement('div');
+  this.wrapperElement = this.createTagelectElement('div', 'wrapper');
   this.wrapperElement.setAttribute('tabindex', '-1');
-  this.wrapperElement.classList.add(...this.options.classNames.wrapper.split(' '));
-  this.wrapperElement.dataset.tagelectWrapper = true;
   // Track if mouse is in container (used for during blur event handling)
   this.wrapperElement.addEventListener('mouseover', () => {
     this.mouseOverContainer = true;
@@ -312,14 +308,10 @@ function Tagelect(element, options) {
     this.mouseOverContainer = false;
   });
 
-  this.containerElement = document.createElement('div');
-  this.containerElement.dataset.tagelectContainer = true;
-  this.containerElement.classList.add(...this.options.classNames.container.split(' '));
+  this.containerElement = this.createTagelectElement('div', 'container');
 
   // Render the input field for entering tags
-  const tagInputElement = document.createElement('span');
-  tagInputElement.classList.add(...this.options.classNames.tagInput.split(' '));
-  tagInputElement.dataset.tagelectTagInput = true;
+  const tagInputElement = this.createTagelectElement('span', 'tagInput');
   tagInputElement.setAttribute('contenteditable', true);
   tagInputElement.dataset.placeholder = this.options.placeholder;
   tagInputElement.style.minWidth = `${this.options.placeholder.length * 6}px`;
