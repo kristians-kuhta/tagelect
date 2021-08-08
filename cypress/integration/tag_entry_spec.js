@@ -252,8 +252,7 @@ describe('Tag entry', () => {
       cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').should('not.exist');
 
       cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('{backspace}{backspace}Al');
-      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').then
-      ($el => {
+      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]').then(($el) => {
         expect($el).to.have.data('suggestion', 'abama');
       });
       cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('A');
