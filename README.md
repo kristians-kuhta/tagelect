@@ -6,8 +6,9 @@
 
 Simple and neat tag input element that allows you to enter new tags,
 performs auto-completion fetching from specified source and has tag validations.
-
-![](example.gif)
+<div style="width: 100%; text-align: center;">
+  <img src="example.gif" width="512px" heigh="auto"/>
+</div>
 
 # Key features 📦
 * Allow user to add 🆕 and remove ❌ tags
