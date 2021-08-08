@@ -279,4 +279,27 @@ describe('Tag entry', () => {
         .should('have.text', 'a');
     });
   });
+
+  it('fetches the suggestions when focusing on tag input after blur if tag input non-empty', () => {
+    cy.intercept({
+      method: 'GET',
+      url: '/suggestions?name=A&count=5',
+    },
+    {
+      body: ['Alabama'],
+    });
+
+    cy.renderTagelectPage('tagelect', { suggestionsSource: '/suggestions' }, () => {
+      cy.get('#tagelect-parent [data-tagelect-wrapper]').trigger('mouseover');
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click().type('A');
+      cy.get('#tagelect-parent [data-tagelect-wrapper]').trigger('mouseout');
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click().trigger('blur');
+      cy.get('#tagelect-parent [data-tagelect-tag-input]').click();
+      cy.get('#tagelect-parent [data-tagelect-dropdown] [data-tagelect-dropdown-item]').should('exist');
+      cy.get('#tagelect-parent [data-tagelect-tag-input][data-suggestion]')
+        .should('exist')
+        .trigger('keydown', { key: 'Tab' }); // Cypress does not support type('{tab}') yet.
+      cy.get('#tagelect-parent [data-tagelect-tag]').contains('Alabama').should('exist');
+    });
+  });
 });
